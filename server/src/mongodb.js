@@ -219,7 +219,8 @@ export const upsertOne = async (collectionName, filter, update, options = {}) =>
     { $set: next },
     { upsert: true, returnDocument: 'after', ...options }
   );
-  return result.value ? normalizeDoc(result.value) : null;
+  const resDoc = result && result.value !== undefined ? result.value : result;
+  return resDoc ? normalizeDoc(resDoc) : null;
 };
 
 export const updateOne = async (collectionName, filter, update, options = {}) => {
@@ -240,7 +241,8 @@ export const updateOne = async (collectionName, filter, update, options = {}) =>
     { $set: update },
     { returnDocument: 'after', ...options }
   );
-  return result.value ? normalizeDoc(result.value) : null;
+  const resDoc = result && result.value !== undefined ? result.value : result;
+  return resDoc ? normalizeDoc(resDoc) : null;
 };
 
 export const deleteOne = async (collectionName, filter) => {
@@ -525,13 +527,15 @@ class MongoQuery {
       const next = normalizeDoc(this.upsertPayload);
       if (next.id) next._id = next.id;
       const result = await col.findOneAndUpdate(filter, { $set: next }, { upsert: true, returnDocument: 'after' });
-      const data = result.value ? normalizeDoc(result.value) : null;
+      const resDoc = result && result.value !== undefined ? result.value : result;
+      const data = resDoc ? normalizeDoc(resDoc) : null;
       return { data: this.singleResult ? data : [data], error: null };
     }
 
     if (this.updatePayload) {
       const result = await col.findOneAndUpdate(this.filter, { $set: this.updatePayload }, { returnDocument: 'after' });
-      const data = result.value ? normalizeDoc(result.value) : null;
+      const resDoc = result && result.value !== undefined ? result.value : result;
+      const data = resDoc ? normalizeDoc(resDoc) : null;
       return { data: this.singleResult ? data : [data], error: null };
     }
 

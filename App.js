@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StatusBar, LogBox, View, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import { StatusBar, LogBox, View, Text, ActivityIndicator, StyleSheet, Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -71,41 +71,67 @@ const App = () => {
 
   return (
     <ChatProvider>
-      <View style={{ flex: 1 }}>
-        <StatusBar
-          barStyle="dark-content"
-          backgroundColor={colors.neutral.white}
-        />
-        <NavigationContainer>
-          <RootStack.Navigator
-            initialRouteName="Auth"
-            screenOptions={{
-              headerShown: false,
-              animation: 'fade',
-            }}
-          >
-            <RootStack.Screen name="Splash" component={SplashScreen} />
+      <View style={styles.outerContainer}>
+        <View style={styles.webContainer}>
+          <StatusBar
+            barStyle="dark-content"
+            backgroundColor={colors.neutral.white}
+          />
+          <NavigationContainer>
+            <RootStack.Navigator
+              initialRouteName="Auth"
+              screenOptions={{
+                headerShown: false,
+                animation: 'fade',
+              }}
+            >
+              <RootStack.Screen name="Splash" component={SplashScreen} />
 
-            <RootStack.Screen
-              name="Auth"
-              component={AuthNavigator}
-              initialParams={{ screen: 'Login' }}
-            />
+              <RootStack.Screen
+                name="Auth"
+                component={AuthNavigator}
+                initialParams={{ screen: 'Login' }}
+              />
 
-            {/* Dashboard routes */}
-            <RootStack.Screen name="AdminApp" component={AdminNavigator} />
-            <RootStack.Screen name="SuperAdminApp" component={SuperAdminNavigator} />
-            <RootStack.Screen name="CaregiverApp" component={CaregiverNavigator} />
-            <RootStack.Screen name="ElderlyApp" component={ElderlyNavigator} />
-            <RootStack.Screen name="NGOApp" component={NGONavigator} />
-          </RootStack.Navigator>
-        </NavigationContainer>
+              {/* Dashboard routes */}
+              <RootStack.Screen name="AdminApp" component={AdminNavigator} />
+              <RootStack.Screen name="SuperAdminApp" component={SuperAdminNavigator} />
+              <RootStack.Screen name="CaregiverApp" component={CaregiverNavigator} />
+              <RootStack.Screen name="ElderlyApp" component={ElderlyNavigator} />
+              <RootStack.Screen name="NGOApp" component={NGONavigator} />
+            </RootStack.Navigator>
+          </NavigationContainer>
+        </View>
       </View>
     </ChatProvider>
   );
 };
 
 const styles = StyleSheet.create({
+  outerContainer: {
+    flex: 1,
+    backgroundColor: '#F1F5F9',
+    ...(Platform.OS === 'web'
+      ? {
+          width: '100%',
+          minHeight: '100vh',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }
+      : {}),
+  },
+  webContainer: {
+    flex: 1,
+    width: '100%',
+    ...(Platform.OS === 'web'
+      ? {
+          maxWidth: 820,
+          minHeight: '100vh',
+          boxShadow: '0 8px 30px rgba(0, 0, 0, 0.08)',
+          backgroundColor: colors.neutral.white,
+        }
+      : {}),
+  },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',

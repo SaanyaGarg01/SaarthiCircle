@@ -178,8 +178,13 @@ const EmergencyContactsScreen = ({ navigation }) => {
 
   const handleCallContact = async (phone) => {
     const cleanPhone = phone.replace(/\s/g, '');
-    const url = Platform.OS === 'ios' ? `telprompt:${cleanPhone}` : `tel:${cleanPhone}`;
+    const url = `tel:${cleanPhone}`;
     
+    if (Platform.OS === 'web') {
+      if (typeof window !== 'undefined') window.open(url, '_self');
+      return;
+    }
+
     try {
       const canOpen = await Linking.canOpenURL(url);
       if (canOpen) {

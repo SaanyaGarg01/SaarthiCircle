@@ -126,11 +126,13 @@ const SOSScreen = ({ navigation }) => {
     const primaryContact = emergencyContacts.find(c => c.isPrimary) || emergencyContacts[0];
     const phoneNumber = primaryContact?.phone || '112';
 
-    try {
-      const url = Platform.OS === 'ios'
-        ? `telprompt:${phoneNumber}`
-        : `tel:${phoneNumber}`;
+    const url = `tel:${phoneNumber}`;
+    if (Platform.OS === 'web') {
+      if (typeof window !== 'undefined') window.open(url, '_self');
+      return;
+    }
 
+    try {
       const canOpen = await Linking.canOpenURL(url);
       if (canOpen) {
         await Linking.openURL(url);

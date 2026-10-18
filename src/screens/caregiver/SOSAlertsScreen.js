@@ -340,7 +340,11 @@ const SOSAlertsScreen = ({ navigation }) => {
       Alert.alert('Missing phone', 'Senior phone number is not available.');
       return;
     }
-    const url = Platform.OS === 'ios' ? `telprompt:${p}` : `tel:${p}`;
+    const url = `tel:${p}`;
+    if (Platform.OS === 'web') {
+      if (typeof window !== 'undefined') window.open(url, '_self');
+      return;
+    }
     try {
       const ok = await Linking.canOpenURL(url);
       if (!ok) {

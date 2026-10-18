@@ -7,7 +7,7 @@ let socket;
 
 export const getSocket = () => {
   if (!socket) {
-    socket = io(BACKEND_URL, { transports: ['websocket'] });
+    socket = io(BACKEND_URL, { transports: ['websocket', 'polling'] });
   }
   return socket;
 };

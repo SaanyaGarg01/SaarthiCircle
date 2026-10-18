@@ -90,7 +90,8 @@ const LoginScreen = ({ navigation }) => {
 
       setShowOtpInput(true);
       setStep('otp');
-      Alert.alert('OTP Sent', t('login.otpSentTo', { email }), [{ text: t('common.ok') }]);
+      const msg = t('login.otpSentTo', { email }) + (data.devCode ? `\n\n[DEV MODE] OTP: ${data.devCode}` : '');
+      Alert.alert('OTP Sent', msg, [{ text: t('common.ok') }]);
     } catch (error) {
       console.error('Send OTP error:', error);
       Alert.alert('Error', 'Failed to send OTP. Please try again.');

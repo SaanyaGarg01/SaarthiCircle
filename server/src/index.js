@@ -333,14 +333,17 @@ const normalizePhone = (phone) => {
 };
 
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
+  host: String(process.env.SMTP_HOST || 'smtp.gmail.com').trim(),
   port: Number(process.env.SMTP_PORT || 587),
   secure: false,
-  auth: process.env.SMTP_USER ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS } : undefined,
-  connectionTimeout: 3000, // 3 seconds timeout
-  socketTimeout: 3000,     // 3 seconds timeout
+  auth: process.env.SMTP_USER ? { 
+    user: String(process.env.SMTP_USER).trim(), 
+    pass: String(process.env.SMTP_PASS).replace(/\s+/g, '') 
+  } : undefined,
+  connectionTimeout: 3000,
+  socketTimeout: 3000,
 });
-const FROM_ADDRESS = process.env.SMTP_FROM || 'SaathiCircle <no-reply@saathicircle.local>';
+const FROM_ADDRESS = String(process.env.SMTP_FROM || 'SaathiCircle <no-reply@saathicircle.local>').trim();
 
 const sendOtpEmail = async (to, code, name) => {
   const html = `

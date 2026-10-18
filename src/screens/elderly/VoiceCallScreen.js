@@ -29,40 +29,7 @@ import socketService, {
 import webrtcService from '../../services/webrtcService';
 import { useChat } from '../../context/ChatContext';
 
-// VoiceCallScreen only works on native platforms
 const VoiceCallScreen = ({ navigation, route }) => {
-  // Show not available message on web
-  if (Platform.OS === 'web') {
-    return (
-      <LinearGradient
-        colors={[colors.primary.light, colors.secondary.cream]}
-        style={styles.webContainer}
-      >
-        <SafeAreaView style={styles.webSafeArea}>
-          <View style={styles.webContent}>
-            <MaterialCommunityIcons
-              name="phone-off"
-              size={80}
-              color={colors.primary.main}
-            />
-            <Text style={styles.webTitle}>Voice Calls Not Available</Text>
-            <Text style={styles.webDescription}>
-              Voice calls are only available on mobile devices (iOS/Android).
-            </Text>
-            <Text style={styles.webHint}>
-              Please use the mobile app to make voice calls to your companion.
-            </Text>
-            <TouchableOpacity
-              style={styles.webBackButton}
-              onPress={() => navigation.goBack()}
-            >
-              <Text style={styles.webBackButtonText}>Go Back</Text>
-            </TouchableOpacity>
-          </View>
-        </SafeAreaView>
-      </LinearGradient>
-    );
-  }
   const { conversationId, companion, callerId, calleeId, isIncoming = false } = route.params || {};
   const { voiceCallState, updateCallDuration, endVoiceCall: endCall } = useChat();
 

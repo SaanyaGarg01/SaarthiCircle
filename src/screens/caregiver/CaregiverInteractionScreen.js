@@ -157,10 +157,11 @@ const CaregiverInteractionScreen = ({ navigation, route }) => {
         {
           text: 'Normal Phone Call',
           onPress: () => {
-            const phoneUrl = Platform.OS === 'ios'
-              ? `telprompt:${phoneNumber}`
-              : `tel:${phoneNumber}`;
-
+            const phoneUrl = `tel:${phoneNumber}`;
+            if (Platform.OS === 'web') {
+              if (typeof window !== 'undefined') window.open(phoneUrl, '_self');
+              return;
+            }
             Linking.canOpenURL(phoneUrl)
               .then(supported => {
                 if (supported) {
@@ -205,16 +206,22 @@ const CaregiverInteractionScreen = ({ navigation, route }) => {
         {
           text: 'WhatsApp',
           onPress: () => {
-            const whatsappUrl = `whatsapp://send?phone=${phoneNumber}&text=Hello, I am your volunteer from SaathiCircle. How can I help you?`;
-            Linking.canOpenURL(whatsappUrl)
+            const encodedText = encodeURIComponent('Hello, I am your volunteer from SaathiCircle. How can I help you?');
+            const whatsappWebUrl = `https://wa.me/${phoneNumber}?text=${encodedText}`;
+            if (Platform.OS === 'web') {
+              if (typeof window !== 'undefined') window.open(whatsappWebUrl, '_blank');
+              return;
+            }
+            const whatsappAppUrl = `whatsapp://send?phone=${phoneNumber}&text=${encodedText}`;
+            Linking.canOpenURL(whatsappAppUrl)
               .then(supported => {
                 if (supported) {
-                  return Linking.openURL(whatsappUrl);
+                  return Linking.openURL(whatsappAppUrl);
                 } else {
-                  Alert.alert('Error', 'WhatsApp is not installed');
+                  return Linking.openURL(whatsappWebUrl);
                 }
               })
-              .catch(err => Alert.alert('Error', 'Could not open WhatsApp'));
+              .catch(() => Linking.openURL(whatsappWebUrl));
           }
         },
         {
@@ -235,6 +242,12 @@ const CaregiverInteractionScreen = ({ navigation, route }) => {
 
   const handleLocation = () => {
     const address = encodeURIComponent(seniorDetails.address);
+    const webMapsUrl = `https://www.google.com/maps/search/?api=1&query=${address}`;
+
+    if (Platform.OS === 'web') {
+      if (typeof window !== 'undefined') window.open(webMapsUrl, '_blank');
+      return;
+    }
 
     Alert.alert(
       'Open Location',
@@ -252,12 +265,11 @@ const CaregiverInteractionScreen = ({ navigation, route }) => {
                 if (supported) {
                   return Linking.openURL(googleMapsUrl);
                 } else {
-                  // Fallback to web Google Maps
-                  return Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${address}`);
+                  return Linking.openURL(webMapsUrl);
                 }
               })
-              .catch(err => {
-                Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${address}`);
+              .catch(() => {
+                Linking.openURL(webMapsUrl);
               });
           }
         },
